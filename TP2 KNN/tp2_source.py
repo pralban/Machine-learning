@@ -18,6 +18,7 @@ from matplotlib.colors import ListedColormap
 #               Data Generation
 ###############################################################################
 
+
 def rand_gauss(n=100, mu=[1, 1], sigmas=[0.1, 0.1]):
     """ Sample n points from a Gaussian variable with center mu,
     and std deviation sigma
@@ -25,6 +26,7 @@ def rand_gauss(n=100, mu=[1, 1], sigmas=[0.1, 0.1]):
     d = len(mu)
     res = np.random.randn(n, d)
     return np.array(res * sigmas + mu)
+
 
 def rand_bi_gauss(n1=100, n2=100, mu1=[1, 1], mu2=[-1, -1], sigmas1=[0.1, 0.1],
                   sigmas2=[0.1, 0.1]):
@@ -37,6 +39,7 @@ def rand_bi_gauss(n1=100, n2=100, mu1=[1, 1], mu2=[-1, -1], sigmas1=[0.1, 0.1],
     X = np.vstack([ex1, ex2])
     ind = np.random.permutation(n1 + n2)
     return X[ind, :], y[ind]
+
 
 def rand_tri_gauss(n1=100, n2=100, n3=100, mu1=[1, 1],
                    mu2=[-1, -1], mu3=[1, -1], sigma1=[0.1, 0.1],
@@ -54,6 +57,7 @@ def rand_tri_gauss(n1=100, n2=100, n3=100, mu1=[1, 1],
     np.random.shuffle(ind)
     return X[ind, :], y[ind]
 
+
 def rand_clown(n1=100, n2=100, sigma1=1, sigma2=2):
     """ Sample a dataset clown  with
     n1 points and noise std deviation sigma1 for the first class, and
@@ -67,6 +71,7 @@ def rand_clown(n1=100, n2=100, sigma1=1, sigma2=2):
     y = np.hstack([np.ones(n1), -1 * np.ones(n2)])
     ind = np.random.permutation(n1 + n2)
     return X[ind, :], y[ind]
+
 
 def rand_checkers(n1=100, n2=100, sigma=0.1):
     """ Sample n1 and n2 points from a noisy checker"""
@@ -94,10 +99,12 @@ def rand_checkers(n1=100, n2=100, sigma=0.1):
     res = np.hstack([xapp, yapp[:, np.newaxis]])
     return np.array(res[ind, :2]), np.array(res[ind, 2])
 
+
 ###############################################################################
 #           Displaying labeled data
 ###############################################################################
 symlist = ['o', 's', 'D', 'x', '+', '*', 'p', 'v', '-', '^']
+
 
 def plot_2d(data, y=None, w=None, alpha_choice=1):
     """ Plot in 2D the dataset data, colors and symbols according to the
@@ -131,6 +138,7 @@ def plot_2d(data, y=None, w=None, alpha_choice=1):
 #           Displaying tools for the Frontiere
 ###############################################################################
 
+
 def frontiere(f, data, step=50, cmap_choice=cm.coolwarm, tiny=False):
     """ trace la frontiere pour la fonction de decision f"""
     xmin, xmax = data[:, 0].min() - 1., data[:, 0].max() + 1.
@@ -146,6 +154,7 @@ def frontiere(f, data, step=50, cmap_choice=cm.coolwarm, tiny=False):
         plt.yticks([])
     else:
         plt.colorbar()
+
 
 def frontiere_new(f, X, y, w=None, step=50, alpha_choice=1, colorbar=True,
                   samples=True):
@@ -199,6 +208,7 @@ def frontiere_new(f, X, y, w=None, step=50, alpha_choice=1, colorbar=True,
 #               Algorithms and functions
 ###############################################################################
 
+
 class ErrorCurve(object):
     def __init__(self, k_range=None, weights='uniform'):
         if k_range is None:
@@ -225,8 +235,10 @@ class ErrorCurve(object):
         if maketitle:
             plt.title("number of training points : %d" % len(self.y))
 
+
 class LOOCurve(object):
     """Leave-One-Out (LOO) curve"""
+
     def __init__(self, k_range=None, weights='uniform'):
         if k_range is None:
             k_range = list(range(1, 6))
@@ -242,14 +254,14 @@ class LOOCurve(object):
             # help(model_selection.ShuffleSplit) pour connaitre la liste
             # des arguments reconnus par votre version de sickitlearn.
             loo = model_selection.ShuffleSplit(n_iter,
-                                                test_size=1,
-                                                train_size=n_samples-1,
-                                                random_state=random_state)
+                                               test_size=1,
+                                               train_size=n_samples-1,
+                                               random_state=random_state)
             knn = neighbors.KNeighborsClassifier(n_neighbors=k,
                                                  weights=self.weights)
             scores = model_selection.cross_val_score(estimator=knn,
-                                                      X=X, y=y,
-                                                      cv=loo)
+                                                     X=X, y=y,
+                                                     cv=loo)
             return np.mean(scores)
 
         scores = list(map(score_func, self.k_range))
@@ -258,6 +270,13 @@ class LOOCurve(object):
 
     def plot(self, marker='o', maketitle=True, **kwargs):
         plt.plot(self.k_range, self.cv_scores, marker=marker, **kwargs)
+        plt.xlabel("K")
+        plt.ylabel("Leave One Out Score (1-error rate)")
+        if maketitle:
+            plt.title("number of training points : %d" % (len(self.y) - 1))
+
+    def plot_error(self, marker='o', maketitle=True, **kwargs):
+        plt.plot(self.k_range, 1-self.cv_scores, marker=marker, **kwargs)
         plt.xlabel("K")
         plt.ylabel("Leave One Out Score (1-error rate)")
         if maketitle:
