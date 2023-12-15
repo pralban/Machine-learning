@@ -275,9 +275,3 @@ class LOOCurve(object):
         if maketitle:
             plt.title("number of training points : %d" % (len(self.y) - 1))
 
-    def plot_error(self, marker='o', maketitle=True, **kwargs):
-        plt.plot(self.k_range, 1-self.cv_scores, marker=marker, **kwargs)
-        plt.xlabel("K")
-        plt.ylabel("Leave One Out Score (1-error rate)")
-        if maketitle:
-            plt.title("number of training points : %d" % (len(self.y) - 1))
