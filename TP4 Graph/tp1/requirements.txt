@@ -7,6 +7,7 @@ debugpy==1.8.0
 decorator==5.1.1
 executing==2.0.1
 fonttools==4.47.0
+gensim==4.3.2
 ipykernel==6.27.1
 ipython==8.18.1
 jedi==0.19.1
@@ -36,6 +37,7 @@ pyzmq==25.1.2
 scikit-network==0.31.0
 scipy==1.11.4
 six==1.16.0
+smart-open==6.4.0
 stack-data==0.6.3
 tornado==6.4
 traitlets==5.14.0
